@@ -2,15 +2,6 @@
 
 Detects which Linux distro or BSD a system is running.
 
-## Features and limitations
-
-`distrodetec` only aims to be able to detect the following:
-
-* The 100 most popular Linux distros and BSDs, according to [distrowatch](https://distrowatch.com/).
-* macOS with Homebrew.
-
-Pull requests for additional systems are welcome!
-
 ## Example use
 
 ```go
@@ -27,7 +18,16 @@ func main() {
 }
 ```
 
-## Help Needed
+## Features and limitations
+
+This package only aims to be able to detect the following:
+
+* The 100 most popular Linux distros and BSDs, according to [distrowatch](https://distrowatch.com/).
+* macOS with Homebrew.
+
+Pull requests for additional systems are welcome!
+
+## Testing
 
 * More testing is always needed when detecting Linux distros and BSDs.
 * Please test the distro detection on your distro/BSD and submit an issue or pull request if it should fail.
