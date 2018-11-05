@@ -57,11 +57,23 @@ func run(shellCommand string) string {
 	return string(stdoutStderr)
 }
 
+// capitalize capitalizes a string
+func capitalize(s string) string {
+	switch len(s) {
+	case 0:
+		return ""
+	case 1:
+		return strings.ToUpper(s)
+	default:
+		return strings.ToUpper(string(s[0])) + s[1:]
+	}
+}
+
 // New detects the platform and distro/BSD, then returns a pointer to
 // a Distro struct.
 func New() *Distro {
 	var d Distro
-	d.platform = runtime.GOOS
+	d.platform = capitalize(runtime.GOOS)
 	d.etcRelease = etcRelease()
 	// Distro name, if not detected
 	d.name = "Unknown"
@@ -91,10 +103,10 @@ func New() *Distro {
 			codename := fields[1]
 			if codename != "" {
 				if strings.HasPrefix(codename, "\"") && strings.HasSuffix(codename, "\"") {
-					d.codename = codename[1 : len(codename)-1]
+					d.codename = capitalize(codename[1 : len(codename)-1])
 					continue
 				}
-				d.codename = codename
+				d.codename = capitalize(codename)
 				continue
 			}
 		}
@@ -140,7 +152,7 @@ func (d *Distro) Grep(name string) bool {
 }
 
 // Platform returns the name of the current platform.
-// Same as runtime.GOOS
+// Same as runtime.GOOS, but capitalized.
 func (d *Distro) Platform() string {
 	return d.platform
 }
@@ -155,21 +167,10 @@ func (d *Distro) Codename() string {
 	return d.codename
 }
 
-func capitalize(s string) string {
-	switch len(s) {
-	case 0:
-		return ""
-	case 1:
-		return strings.ToUpper(s)
-	default:
-		return strings.ToUpper(string(s[0])) + s[1:]
-	}
-}
-
 // String returns the current platform and distro as a string
 func (d *Distro) String() string {
 	if d.codename != "" {
-		return fmt.Sprintf("%s (%s %s)", capitalize(d.platform), d.name, d.codename)
+		return fmt.Sprintf("%s (%s %s)", d.platform, d.name, d.codename)
 	}
-	return fmt.Sprintf("%s (%s)", capitalize(d.platform), d.name)
+	return fmt.Sprintf("%s (%s)", d.platform, d.name)
 }
