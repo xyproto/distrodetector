@@ -31,7 +31,7 @@ func Has(executable string) bool {
 }
 
 // etcRelease returns the contents of /etc/*release*, or an empty string
-func etcRelease() string {
+func readEtcRelease() string {
 	filenames, err := filepath.Glob("/etc/*release*")
 	if err != nil {
 		return ""
@@ -74,7 +74,7 @@ func capitalize(s string) string {
 func New() *Distro {
 	var d Distro
 	d.platform = capitalize(runtime.GOOS)
-	d.etcRelease = etcRelease()
+	d.etcRelease = readEtcRelease()
 	// Distro name, if not detected
 	d.name = "Unknown"
 	d.codename = ""
@@ -152,22 +152,28 @@ func (d *Distro) Grep(name string) bool {
 }
 
 // Platform returns the name of the current platform.
-// Same as runtime.GOOS, but capitalized.
+// This is the same as `runtime.GOOS`, but capitalized.
 func (d *Distro) Platform() string {
 	return d.platform
 }
 
-// Name returns the detected name of the current distro/BSD, or "Unknown"
+// Name returns the detected name of the current distro/BSD, or "Unknown".
 func (d *Distro) Name() string {
 	return d.name
 }
 
-// Codename returns the detected codename of the current distro/BSD, or an empty string
+// Codename returns the detected codename of the current distro/BSD, or an empty string.
 func (d *Distro) Codename() string {
 	return d.codename
 }
 
-// String returns the current platform and distro as a string
+// EtcRelease returns the contents of /etc/*release, or an empty string.
+// The contents are cached.
+func (d *Distro) EtcRelease() string {
+	return d.etcRelease
+}
+
+// String returns a string with the current platform, distro and codename (if available).
 func (d *Distro) String() string {
 	if d.codename != "" {
 		return fmt.Sprintf("%s (%s %s)", d.platform, d.name, d.codename)
