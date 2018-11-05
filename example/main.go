@@ -6,5 +6,6 @@ import (
 )
 
 func main() {
-	fmt.Println(distrodetector.New())
+	distro := distrodetector.New()
+	fmt.Println(distro.Name())
 }
