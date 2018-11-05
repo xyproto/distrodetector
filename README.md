@@ -19,6 +19,11 @@ func main() {
 	fmt.Println(distro.Name())
 }
 ```
+## Example output
+
+    Linux (Arch Linux)
+    Linux (Ubuntu Bionic)
+    Darwin (10.13.3)
 
 ## Features and limitations
 
@@ -37,5 +42,5 @@ Pull requests for additional systems are welcome!
 ## General Info
 
 * License: MIT
-* Version: 1.0.0
+* Version: 1.1.0
 * Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
