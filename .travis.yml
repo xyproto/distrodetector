@@ -4,9 +4,15 @@ matrix:
   include:
     - os: linux
       dist: trusty
-      sudo: required
+      sudo: false
+      env:
+        - DISTRODETECT="Linux (Ubuntu Trusty)"
     - os: linux
       dist: precise
-      sudo: required
+      sudo: false
+      env:
+        - DISTRODETECT="Linux (Ubuntu Precise)"
     - os: osx
       osx_image: xcode7.2
+      env:
+        - DISTRODETECT="Darwin (10.11)"

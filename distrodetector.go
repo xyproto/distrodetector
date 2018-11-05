@@ -18,6 +18,7 @@ type Distro struct {
 	platform   string
 	etcRelease string
 	name       string
+	codename   string
 }
 
 // Has returns the full path to the given executable, or the original string
@@ -46,6 +47,16 @@ func etcRelease() string {
 	return bs.String()
 }
 
+// run a shell command and return the output, or an empty string
+func run(shellCommand string) string {
+	cmd := exec.Command("sh", "-c", shellCommand)
+	stdoutStderr, err := cmd.CombinedOutput()
+	if err != nil {
+		return ""
+	}
+	return string(stdoutStderr)
+}
+
 // New detects the platform and distro/BSD, then returns a pointer to
 // a Distro struct.
 func New() *Distro {
@@ -54,6 +65,7 @@ func New() *Distro {
 	d.etcRelease = etcRelease()
 	// Distro name, if not detected
 	d.name = "Unknown"
+	d.codename = ""
 	// Check for Linux distros and BSD distros
 	for _, distroName := range distroNames {
 		if d.Grep(distroName) {
@@ -69,10 +81,21 @@ func New() *Distro {
 			if name != "" {
 				if strings.HasPrefix(name, "\"") && strings.HasSuffix(name, "\"") {
 					d.name = name[1 : len(name)-1]
-					break
+					continue
 				}
 				d.name = name
-				break
+				continue
+			}
+		} else if strings.HasPrefix(line, "DISTRIB_CODENAME=") {
+			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
+			codename := fields[1]
+			if codename != "" {
+				if strings.HasPrefix(codename, "\"") && strings.HasSuffix(codename, "\"") {
+					d.codename = codename[1 : len(codename)-1]
+					continue
+				}
+				d.codename = codename
+				continue
 			}
 		}
 	}
@@ -95,8 +118,8 @@ func New() *Distro {
 			d.name = "Alpine"
 		} else if Has("slapt-get") || Has("slackpkg") {
 			d.name = "Slackware"
-		} else if d.platform == "darwin" && Has("homebrew") {
-			d.name = "Homebrew"
+		} else if d.platform == "darwin" {
+			d.name = run("defaults read loginwindow SystemVersionStampAsString")
 		} else if Has("/usr/sbin/pkg") {
 			d.name = "FreeBSD"
 			// rpm and dpkg-query should come last, since many distros may include them
@@ -127,7 +150,26 @@ func (d *Distro) Name() string {
 	return d.name
 }
 
+// Codename returns the detected codename of the current distro/BSD, or an empty string
+func (d *Distro) Codename() string {
+	return d.codename
+}
+
+func capitalize(s string) string {
+	switch len(s) {
+	case 0:
+		return ""
+	case 1:
+		return strings.ToUpper(s)
+	default:
+		return strings.ToUpper(string(s[0])) + s[1:]
+	}
+}
+
 // String returns the current platform and distro as a string
 func (d *Distro) String() string {
-	return fmt.Sprintf("%s (%s)", d.platform, d.name)
+	if d.codename != "" {
+		return fmt.Sprintf("%s (%s %s)", capitalize(d.platform), d.name, d.codename)
+	}
+	return fmt.Sprintf("%s (%s)", capitalize(d.platform), d.name)
 }
