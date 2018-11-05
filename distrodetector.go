@@ -130,8 +130,8 @@ func New() *Distro {
 			d.name = "Alpine"
 		} else if Has("slapt-get") || Has("slackpkg") {
 			d.name = "Slackware"
-		} else if d.platform == "darwin" {
-			d.name = run("sw_vers | grep ProductVersion | cut -d: -f2")
+		} else if d.platform == "Darwin" {
+			d.name = run("sw_vers -productVersion")
 		} else if Has("/usr/sbin/pkg") {
 			d.name = "FreeBSD"
 			// rpm and dpkg-query should come last, since many distros may include them
