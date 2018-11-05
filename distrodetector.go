@@ -131,7 +131,7 @@ func New() *Distro {
 		} else if Has("slapt-get") || Has("slackpkg") {
 			d.name = "Slackware"
 		} else if d.platform == "darwin" {
-			d.name = run("defaults read loginwindow SystemVersionStampAsString")
+			d.name = run("sw_vers | grep ProductVersion | cut -d: -f2")
 		} else if Has("/usr/sbin/pkg") {
 			d.name = "FreeBSD"
 			// rpm and dpkg-query should come last, since many distros may include them
@@ -144,7 +144,7 @@ func New() *Distro {
 	return &d
 }
 
-// Search /etc/*release* for the given string.
+// Grep /etc/*release* for the given string.
 // If the search fails, a case-insensitive string search is attempted.
 // The contents of /etc/*release* is cached.
 func (d *Distro) Grep(name string) bool {
