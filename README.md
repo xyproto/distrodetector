@@ -21,6 +21,8 @@ func main() {
 ```
 ## Example output
 
+From the Distro `String()` function. The parts can be retrieved separately with `.Name()` and friends.
+
     Linux (Arch Linux)
     Linux (Ubuntu Bionic)
     Darwin (10.13.3)
