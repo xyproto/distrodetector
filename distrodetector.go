@@ -3,6 +3,7 @@ package distrodetector
 import (
 	"fmt"
 	"io/ioutil"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -17,6 +18,15 @@ type Distro struct {
 	platform   string
 	etcRelease string
 	name       string
+}
+
+// Has returns the full path to the given executable, or the original string
+func Has(executable string) bool {
+	_, err := exec.LookPath(executable)
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 // etcRelease returns the contents of /etc/*release*, or an empty string
@@ -69,30 +79,30 @@ func New() *Distro {
 	// The following checks are only performed if no distro is detected so far
 	if d.name == "Unknown" {
 		// Executables related to package managers
-		if which("xbsp-query") {
+		if Has("xbsp-query") {
 			d.name = "Void Linux"
-		} else if which("pacman") {
+		} else if Has("pacman") {
 			d.name = "Arch Linux"
-		} else if which("dnf") {
+		} else if Has("dnf") {
 			d.name = "Fedora"
-		} else if which("yum") {
+		} else if Has("yum") {
 			d.name = "Fedora"
-		} else if which("zypper") {
+		} else if Has("zypper") {
 			d.name = "openSUSE"
-		} else if which("emerge") {
+		} else if Has("emerge") {
 			d.name = "Gentoo"
-		} else if which("apk") {
+		} else if Has("apk") {
 			d.name = "Alpine"
-		} else if which("slapt-get") || which("slackpkg") {
+		} else if Has("slapt-get") || Has("slackpkg") {
 			d.name = "Slackware"
-		} else if d.platform == "darwin" && which("homebrew") {
+		} else if d.platform == "darwin" && Has("homebrew") {
 			d.name = "Homebrew"
-		} else if which("/usr/sbin/pkg") {
+		} else if Has("/usr/sbin/pkg") {
 			d.name = "FreeBSD"
-		// rpm and dpkg-query should come last, since many distros may include them
-		} else if which("rpm") {
+			// rpm and dpkg-query should come last, since many distros may include them
+		} else if Has("rpm") {
 			d.name = "Red Hat"
-		} else if which("dpkg-query") {
+		} else if Has("dpkg-query") {
 			d.name = "Debian"
 		}
 	}
