@@ -1,4 +1,5 @@
 FROM voidlinux/voidlinux
-RUN xbps-install -v -Syu && xbps-install -v -Syu && xbps-install -v -Sy git go
+ENV PACKAGES git go
+RUN xbps-install -Syu && xbps-install -Syu && xbps-install -Sy "$PACKAGES"
 RUN go get -u -v github.com/xyproto/distrodetector/cmd/d4
 CMD d4
