@@ -21,7 +21,7 @@ func main() {
 ```
 ## Example output
 
-From the Distro `String()` function. The parts can be retrieved separately with `.Name()` and friends.
+From the Distro `String()` function. The parts can be retrieved separately with `.Platform()`, `.Name()` and `.Codename()`.
 
     Linux (Arch Linux)
     Linux (Ubuntu Bionic)
