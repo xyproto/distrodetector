@@ -119,8 +119,27 @@ func New() *Distro {
 		} else if Has("slapt-get") || Has("slackpkg") {
 			d.name = "Slackware"
 		} else if d.platform == "Darwin" {
-			d.name = strings.TrimSpace(Run("sw_vers -productName"))
+			productName := strings.TrimSpace(Run("sw_vers -productName"))
+			// Set the platform to either "macOS" or "OS X", if it is in the product name
+			if strings.HasPrefix(productName, "Mac OS X") {
+				d.platform = "OS X"
+			} else if strings.Contains(productName, "macOS") {
+				d.platform = "macOS"
+			} else {
+				d.platform = productName
+			}
+			// Version number
 			d.version = strings.TrimSpace(Run("sw_vers -productVersion"))
+			// Codename, thanks @rubynorails! https://unix.stackexchange.com/a/234173/3920
+			d.codename = strings.TrimSpace(Run("awk '/SOFTWARE LICENSE AGREEMENT FOR OS X/' '/System/Library/CoreServices/Setup Assistant.app/Contents/Resources/en.lproj/OSXSoftwareLicense.rtf' | awk -F 'OS X ' '{print $NF}' | awk '{print substr($0, 0, length($0)-1)}'"))
+			// Mac doesn't really have a distro name, use "Homebrew" if Homebrew is available
+			d.name = ""
+			if Has("brew") {
+				d.name = "Homebrew"
+			} else if Has("fink") {
+				// Use "Fink" if fink is available
+				d.name = "Fink"
+			}
 		} else if Has("/usr/sbin/pkg") {
 			d.name = "FreeBSD"
 			// rpm and dpkg-query should come last, since many distros may include them
@@ -181,7 +200,7 @@ func (d *Distro) String() string {
 	if d.name != "" || d.codename != "" || d.version != "" {
 		sb.WriteString("(")
 		needSpace := false
-		if d.name != defaultName {
+		if d.name != defaultName && d.name != "" {
 			sb.WriteString(d.name)
 			needSpace = true
 		}

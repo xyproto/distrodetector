@@ -16,4 +16,4 @@ matrix:
       before_install: sw_vers
       osx_image: xcode7.2
       env:
-        - DISTRODETECT="Darwin (Mac OS X 10.13.3)"
+        - DISTRODETECT="OS X (High Sierra 10.13.3)"

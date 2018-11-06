@@ -25,7 +25,7 @@ The parts can be retrieved separately with `.Platform()`, `.Name()`, `.Codename(
 
     Linux (Arch Linux)
     Linux (Ubuntu Bionic 18.04)
-    Darwin (macOS 10.13.3)
+    macOS (High Sierra 10.13.3)
 
 ## Features and limitations
 
