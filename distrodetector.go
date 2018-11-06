@@ -147,7 +147,14 @@ func (d *Distro) Name() string {
 	return d.name
 }
 
-// Codename returns the detected codename of the current distro/BSD, or an empty string.
+// Codename returns the detected codename of the current distro/BSD,
+// or an empty string.
+func (d *Distro) Codename() string {
+	return d.codename
+}
+
+// Version returns the detected release version of the current distro/BSD,
+// or an empty string.
 func (d *Distro) Codename() string {
 	return d.codename
 }
@@ -158,7 +165,11 @@ func (d *Distro) EtcRelease() string {
 	return d.etcRelease
 }
 
-// String returns a string with the current platform, distro and codename (if available).
+// String returns a string with the current platform, distro
+// codename and release version (if available).
+// Example strings:
+//   Linux (Ubuntu Bionic 18.04)
+//   Darwin (10.13.3)
 func (d *Distro) String() string {
 	var sb strings.Builder
 	sb.WriteString(d.platform)
