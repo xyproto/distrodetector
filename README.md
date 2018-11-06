@@ -21,10 +21,10 @@ func main() {
 ```
 ## Example output
 
-From the Distro `String()` function. The parts can be retrieved separately with `.Platform()`, `.Name()` and `.Codename()`.
+The parts can be retrieved separately with `.Platform()`, `.Name()`, `.Codename()` and `.Version()`. A combined string can be returned with the `.String()` function:
 
     Linux (Arch Linux)
-    Linux (Ubuntu Bionic)
+    Linux (Ubuntu Bionic 18.04)
     Darwin (10.13.3)
 
 ## Features and limitations
