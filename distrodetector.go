@@ -1,9 +1,7 @@
 package distrodetector
 
 import (
-	"fmt"
 	"io/ioutil"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -19,15 +17,7 @@ type Distro struct {
 	etcRelease string
 	name       string
 	codename   string
-}
-
-// Has returns the full path to the given executable, or the original string
-func Has(executable string) bool {
-	_, err := exec.LookPath(executable)
-	if err != nil {
-		return false
-	}
-	return true
+	version    string
 }
 
 // etcRelease returns the contents of /etc/*release*, or an empty string
@@ -47,28 +37,6 @@ func readEtcRelease() string {
 	return bs.String()
 }
 
-// run a shell command and return the output, or an empty string
-func run(shellCommand string) string {
-	cmd := exec.Command("sh", "-c", shellCommand)
-	stdoutStderr, err := cmd.CombinedOutput()
-	if err != nil {
-		return ""
-	}
-	return string(stdoutStderr)
-}
-
-// capitalize capitalizes a string
-func capitalize(s string) string {
-	switch len(s) {
-	case 0:
-		return ""
-	case 1:
-		return strings.ToUpper(s)
-	default:
-		return strings.ToUpper(string(s[0])) + s[1:]
-	}
-}
-
 // New detects the platform and distro/BSD, then returns a pointer to
 // a Distro struct.
 func New() *Distro {
@@ -78,6 +46,7 @@ func New() *Distro {
 	// Distro name, if not detected
 	d.name = "Unknown"
 	d.codename = ""
+	d.version = ""
 	// Check for Linux distros and BSD distros
 	for _, distroName := range distroNames {
 		if d.Grep(distroName) {
@@ -85,8 +54,9 @@ func New() *Distro {
 			break
 		}
 	}
-	// Check if NAME= is defined in /etc/*release*
+	// Examine all lines of text in /etc/*release*
 	for _, line := range strings.Split(d.etcRelease, "\n") {
+		// Check if NAME= is defined in /etc/*release*
 		if strings.HasPrefix(line, "NAME=") {
 			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
 			name := fields[1]
@@ -96,8 +66,8 @@ func New() *Distro {
 					continue
 				}
 				d.name = name
-				continue
 			}
+			// Check if DISTRIB_CODENAME= is defined in /etc/*release*
 		} else if strings.HasPrefix(line, "DISTRIB_CODENAME=") {
 			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
 			codename := fields[1]
@@ -107,9 +77,24 @@ func New() *Distro {
 					continue
 				}
 				d.codename = capitalize(codename)
-				continue
+			}
+			// Check if DISTRIB_RELEASE= is defined in /etc/*release*
+		} else if strings.HasPrefix(line, "DISTRIB_RELEASE=") {
+			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
+			version := fields[1]
+			if version != "" {
+				if strings.HasPrefix(version, "\"") && strings.HasSuffix(version, "\"") {
+					if containsDigit(version) {
+						d.version = version[1 : len(version)-1]
+					}
+					continue
+				}
+				if containsDigit(version) {
+					d.version = version
+				}
 			}
 		}
+
 	}
 	// The following checks are only performed if no distro is detected so far
 	if d.name == "Unknown" {
@@ -131,7 +116,7 @@ func New() *Distro {
 		} else if Has("slapt-get") || Has("slackpkg") {
 			d.name = "Slackware"
 		} else if d.platform == "Darwin" {
-			d.name = strings.TrimSpace(run("sw_vers -productVersion"))
+			d.version = strings.TrimSpace(Run("sw_vers -productVersion"))
 		} else if Has("/usr/sbin/pkg") {
 			d.name = "FreeBSD"
 			// rpm and dpkg-query should come last, since many distros may include them
@@ -175,8 +160,30 @@ func (d *Distro) EtcRelease() string {
 
 // String returns a string with the current platform, distro and codename (if available).
 func (d *Distro) String() string {
-	if d.codename != "" {
-		return fmt.Sprintf("%s (%s %s)", d.platform, d.name, d.codename)
+	var sb strings.Builder
+	sb.WriteString(d.platform)
+	sb.WriteString(" ")
+	if d.name != "" || d.codename != "" || d.version != "" {
+		sb.WriteString("(")
+		needSpace := false
+		if d.name != "" {
+			sb.WriteString(d.name)
+			needSpace = true
+		}
+		if d.codename != "" {
+			if needSpace {
+				sb.WriteString(" ")
+			}
+			sb.WriteString(d.codename)
+			needSpace = true
+		}
+		if d.version != "" {
+			if needSpace {
+				sb.WriteString(" ")
+			}
+			sb.WriteString(d.version)
+		}
+		sb.WriteString(")")
 	}
-	return fmt.Sprintf("%s (%s)", d.platform, d.name)
+	return sb.String()
 }
