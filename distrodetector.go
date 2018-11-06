@@ -132,14 +132,8 @@ func New() *Distro {
 			d.version = strings.TrimSpace(Run("sw_vers -productVersion"))
 			// Codename, thanks @rubynorails! https://unix.stackexchange.com/a/234173/3920
 			d.codename = strings.TrimSpace(Run("awk '/SOFTWARE LICENSE AGREEMENT FOR OS X/' '/System/Library/CoreServices/Setup Assistant.app/Contents/Resources/en.lproj/OSXSoftwareLicense.rtf' | awk -F 'OS X ' '{print $NF}' | awk '{print substr($0, 0, length($0)-1)}'"))
-			// Mac doesn't really have a distro name, use "Homebrew" if Homebrew is available
+			// Mac doesn't really have a distro name
 			d.name = ""
-			if Has("brew") {
-				d.name = "Homebrew"
-			} else if Has("fink") {
-				// Use "Fink" if fink is available
-				d.name = "Fink"
-			}
 		} else if Has("/usr/sbin/pkg") {
 			d.name = "FreeBSD"
 			// rpm and dpkg-query should come last, since many distros may include them
