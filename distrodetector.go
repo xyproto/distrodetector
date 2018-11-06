@@ -155,8 +155,8 @@ func (d *Distro) Codename() string {
 
 // Version returns the detected release version of the current distro/BSD,
 // or an empty string.
-func (d *Distro) Codename() string {
-	return d.codename
+func (d *Distro) Version() string {
+	return d.version
 }
 
 // EtcRelease returns the contents of /etc/*release, or an empty string.
