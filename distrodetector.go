@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+const defaultName = "Unknown"
+
 // Used when checking for Linux distros and BSDs (and NAME= is not defined in /etc)
 var distroNames = []string{"Arch Linux", "Debian", "Ubuntu", "Void Linux", "FreeBSD", "NetBSD", "OpenBSD", "Manjaro", "Mint", "Elementary", "MX Linuyx", "Fedora", "openSUSE", "Solus", "Zorin", "CentOS", "KDE neon", "Lite", "Kali", "Antergos", "antiX", "Lubuntu", "PCLinuxOS", "Endless", "Peppermint", "SmartOS", "TrueOS", "Arco", "SparkyLinux", "deepin", "Puppy", "Slackware", "Bodhi", "Tails", "Xubuntu", "Archman", "Bluestar", "Mageia", "Deuvan", "Parrot", "Pop!", "ArchLabs", "Q4OS", "Kubuntu", "Nitrux", "Red Hat", "4MLinux", "Gentoo", "Pinguy", "LXLE", "KaOS", "Ultimate", "Alpine", "Feren", "KNOPPIX", "Robolinux", "Voyager", "Netrunner", "GhostBSD", "Budgie", "ClearOS", "Gecko", "SwagArch", "Emmabuntüs", "Scientific", "Omarine", "Neptune", "NixOS", "Slax", "Clonezilla", "DragonFly", "ExTiX", "OpenBSD", "Redcore", "Ubuntu Studio", "BunsenLabs", "BlackArch", "NuTyX", "ArchBang", "BackBox", "Sabayon", "AUSTRUMI", "Container", "ROSA", "SteamOS", "Tiny Core", "Kodachi", "Qubes", "siduction", "Parabola", "Trisquel", "Vector", "SolydXK", "Elive", "AV Linux", "Artix", "Raspbian", "Porteus"}
 
@@ -44,7 +46,7 @@ func New() *Distro {
 	d.platform = capitalize(runtime.GOOS)
 	d.etcRelease = readEtcRelease()
 	// Distro name, if not detected
-	d.name = "Unknown"
+	d.name = defaultName
 	d.codename = ""
 	d.version = ""
 	// Check for Linux distros and BSD distros
@@ -97,7 +99,7 @@ func New() *Distro {
 
 	}
 	// The following checks are only performed if no distro is detected so far
-	if d.name == "Unknown" {
+	if d.name == defaultName {
 		// Executables related to package managers
 		if Has("xbsp-query") {
 			d.name = "Void Linux"
@@ -177,7 +179,7 @@ func (d *Distro) String() string {
 	if d.name != "" || d.codename != "" || d.version != "" {
 		sb.WriteString("(")
 		needSpace := false
-		if d.name != "" {
+		if d.name != defaultName {
 			sb.WriteString(d.name)
 			needSpace = true
 		}
