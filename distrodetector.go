@@ -99,6 +99,7 @@ func New() *Distro {
 
 	}
 	// The following checks are only performed if no distro is detected so far
+	// TODO: Generate a list of all files in PATH before performing these checks
 	if d.name == defaultName {
 		// Executables related to package managers
 		if Has("xbsp-query") {
@@ -118,6 +119,7 @@ func New() *Distro {
 		} else if Has("slapt-get") || Has("slackpkg") {
 			d.name = "Slackware"
 		} else if d.platform == "Darwin" {
+			d.name = strings.TrimSpace(Run("sw_vers -productName"))
 			d.version = strings.TrimSpace(Run("sw_vers -productVersion"))
 		} else if Has("/usr/sbin/pkg") {
 			d.name = "FreeBSD"
