@@ -1,7 +1,9 @@
 language: go
 
+sudo: required
+
 services:
-  -docker
+  - docker
 
 matrix:
   include:
