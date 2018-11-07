@@ -4,7 +4,7 @@ matrix:
   fast_finish: true
   include:
     - os: linux
-      env: DISTRODETECT="Linux (Debian GNU/Linux)"
+      env: DISTRODETECT="Linux (Debian 9 Stretch)"
       script: tests/debian/run.sh
     - os: linux
       dist: trusty

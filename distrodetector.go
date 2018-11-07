@@ -41,11 +41,22 @@ func readEtcRelease() string {
 
 // expand expands some distro names to the longer version
 func expand(name string) string {
-	rdict := map[string]string{"void": "Void Linux"}
+	rdict := map[string]string{"void": "Void Linux", "Debian GNU/Linux": "Debian"}
 	if _, found := rdict[name]; found {
 		return rdict[name]
 	}
 	return name
+}
+
+// Remove parenthesis and capitalize words within parenthesis
+func nopar(s string) string {
+	if strings.Contains(s, "(") && strings.Contains(s, ")") {
+		fields := strings.SplitN(s, "(", 2)
+		a := fields[0] + capitalize(fields[1])
+		fields = strings.SplitN(a, ")", 2)
+		return fields[0] + fields[1]
+	}
+	return s
 }
 
 // detectFromExecutables tries to detect distro information by looking for
@@ -122,10 +133,10 @@ func (d *Distro) detectFromEtc() {
 			codename := fields[1]
 			if codename != "" {
 				if strings.HasPrefix(codename, "\"") && strings.HasSuffix(codename, "\"") {
-					d.codename = capitalize(codename[1 : len(codename)-1])
+					d.codename = nopar(capitalize(codename[1 : len(codename)-1]))
 					continue
 				}
-				d.codename = capitalize(codename)
+				d.codename = nopar(capitalize(codename))
 			}
 			// Check if DISTRIB_RELEASE= is defined in /etc/*release*
 		} else if strings.HasPrefix(line, "DISTRIB_RELEASE=") {
@@ -162,7 +173,7 @@ func (d *Distro) detectFromEtc() {
 			if version != "" {
 				if strings.HasPrefix(version, "\"") && strings.HasSuffix(version, "\"") {
 					if containsDigit(version) {
-						d.version += "." + version[1 : len(version)-1]
+						d.version += "." + version[1:len(version)-1]
 					}
 					continue
 				}
