@@ -1,18 +1,16 @@
 language: go
 
-dist: trusty
-sudo: required
-
 matrix:
   fast_finish: true
   include:
     - os: linux
+      env: DISTRODETECT="Linux (Debian GNU/Linux)"
+      script: tests/debian/run.sh
+    - os: linux
       dist: trusty
-      sudo: false
       env: DISTRODETECT="Linux (Ubuntu Trusty 14.04)"
     - os: linux
       dist: precise
-      sudo: false
       env: DISTRODETECT="Linux (Ubuntu Precise 12.04)"
     - os: osx
       before_install: sw_vers
@@ -24,6 +22,3 @@ matrix:
     - os: linux
       env: DISTRODETECT="Linux (Arch Linux)"
       script: tests/arch/run.sh
-    - os: linux
-      env: DISTRODETECT="Linux (Debian)"
-      script: tests/debian/run.sh
