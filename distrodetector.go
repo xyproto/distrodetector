@@ -14,7 +14,7 @@ var distroNames = []string{"Arch Linux", "Debian", "Ubuntu", "Void Linux", "Free
 
 // TODO: Find a better way
 //ihttps://en.wikipedia.org/wiki/List_of_Apple_operating_systems
-//var codeNames = map[string]string{"10.0": "Cheetah", "10.1": "Puma", "10.2": "Jaguar", ...
+var codeNames = map[string]string{"10.0": "Cheetah", "10.1": "Puma", "10.2": "Jaguar", "10.3": "Panther", "10.4": "Tiger", "10.5":"Leopard", "10.6":"Snow Leopard", "10.7":"Lion", "10.8":"Mountain Lion", "10.9":"Mavericks", "10.10":"Yosemite", "10.11":"El Capitan", "10.12":"Sierra", "10.13":"High Sierra"}
 
 // Distro represents the platform, contents of /etc/*release* and name of the
 // detected Linux distribution or BSD.
@@ -43,17 +43,64 @@ func readEtcRelease() string {
 	return bs.String()
 }
 
-// New detects the platform and distro/BSD, then returns a pointer to
-// a Distro struct.
-func New() *Distro {
-	var d Distro
-	d.platform = capitalize(runtime.GOOS)
-	d.etcRelease = readEtcRelease()
-	// Distro name, if not detected
-	d.name = defaultName
-	d.codename = ""
-	d.version = ""
-	// Check for Linux distros and BSD distros
+// expand expands some distro names to the longer version
+func expand(name string) string {
+	rdict := map[string]string{"void": "Void Linux"}
+	if _, found := rdict[name]; found {
+		return rdict[name]
+	}
+	return name
+}
+
+// detectFromExecutables tries to detect distro information by looking for
+// or using existing binaries on the system.
+func (d *Distro) detectFromExecutables() {
+	// TODO: Generate a list of all files in PATH before performing these checks
+	// Executables related to package managers
+	if Has("xbsp-query") {
+		d.name = "Void Linux"
+	} else if Has("pacman") {
+		d.name = "Arch Linux"
+	} else if Has("dnf") {
+		d.name = "Fedora"
+	} else if Has("yum") {
+		d.name = "Fedora"
+	} else if Has("zypper") {
+		d.name = "openSUSE"
+	} else if Has("emerge") {
+		d.name = "Gentoo"
+	} else if Has("apk") {
+		d.name = "Alpine"
+	} else if Has("slapt-get") || Has("slackpkg") {
+		d.name = "Slackware"
+	} else if d.platform == "Darwin" {
+		productName := strings.TrimSpace(Run("sw_vers -productName"))
+		// Set the platform to either "macOS" or "OS X", if it is in the product name
+		if strings.HasPrefix(productName, "Mac OS X") {
+			d.platform = "OS X"
+		} else if strings.Contains(productName, "macOS") {
+			d.platform = "macOS"
+		} else {
+			d.platform = productName
+		}
+		// Version number
+		d.version = strings.TrimSpace(Run("sw_vers -productVersion"))
+		// Codename, thanks @rubynorails! https://unix.stackexchange.com/a/234173/3920
+		d.codename = strings.TrimSpace(Run("awk '/SOFTWARE LICENSE AGREEMENT FOR OS X/' '/System/Library/CoreServices/Setup Assistant.app/Contents/Resources/en.lproj/OSXSoftwareLicense.rtf' | awk -F 'OS X ' '{print $NF}' | awk '{print substr($0, 0, length($0)-1)}'"))
+		// Mac doesn't really have a distro name
+		d.name = ""
+	} else if Has("/usr/sbin/pkg") {
+		d.name = "FreeBSD"
+		// rpm and dpkg-query should come last, since many distros may include them
+	} else if Has("rpm") {
+		d.name = "Red Hat"
+	} else if Has("dpkg-query") {
+		d.name = "Debian"
+	}
+}
+
+func (d *Distro) detectFromEtc() {
+	// First check for Linux distros and BSD distros by grepping in /etc/*release*
 	for _, distroName := range distroNames {
 		if d.Grep(distroName) {
 			d.name = distroName
@@ -100,52 +147,26 @@ func New() *Distro {
 				}
 			}
 		}
-
 	}
-	// The following checks are only performed if no distro is detected so far
-	// TODO: Generate a list of all files in PATH before performing these checks
+}
+
+// New detects the platform and distro/BSD, then returns a pointer to
+// a Distro struct.
+func New() *Distro {
+	var d Distro
+	d.platform = capitalize(runtime.GOOS)
+	d.etcRelease = readEtcRelease()
+	// Distro name, if not detected
+	d.name = defaultName
+	d.codename = ""
+	d.version = ""
+
+	d.detectFromEtc()
+	// Replacements
+	d.name = expand(d.name)
 	if d.name == defaultName {
-		// Executables related to package managers
-		if Has("xbsp-query") {
-			d.name = "Void Linux"
-		} else if Has("pacman") {
-			d.name = "Arch Linux"
-		} else if Has("dnf") {
-			d.name = "Fedora"
-		} else if Has("yum") {
-			d.name = "Fedora"
-		} else if Has("zypper") {
-			d.name = "openSUSE"
-		} else if Has("emerge") {
-			d.name = "Gentoo"
-		} else if Has("apk") {
-			d.name = "Alpine"
-		} else if Has("slapt-get") || Has("slackpkg") {
-			d.name = "Slackware"
-		} else if d.platform == "Darwin" {
-			productName := strings.TrimSpace(Run("sw_vers -productName"))
-			// Set the platform to either "macOS" or "OS X", if it is in the product name
-			if strings.HasPrefix(productName, "Mac OS X") {
-				d.platform = "OS X"
-			} else if strings.Contains(productName, "macOS") {
-				d.platform = "macOS"
-			} else {
-				d.platform = productName
-			}
-			// Version number
-			d.version = strings.TrimSpace(Run("sw_vers -productVersion"))
-			// Codename, thanks @rubynorails! https://unix.stackexchange.com/a/234173/3920
-			d.codename = strings.TrimSpace(Run("awk '/SOFTWARE LICENSE AGREEMENT FOR OS X/' '/System/Library/CoreServices/Setup Assistant.app/Contents/Resources/en.lproj/OSXSoftwareLicense.rtf' | awk -F 'OS X ' '{print $NF}' | awk '{print substr($0, 0, length($0)-1)}'"))
-			// Mac doesn't really have a distro name
-			d.name = ""
-		} else if Has("/usr/sbin/pkg") {
-			d.name = "FreeBSD"
-			// rpm and dpkg-query should come last, since many distros may include them
-		} else if Has("rpm") {
-			d.name = "Red Hat"
-		} else if Has("dpkg-query") {
-			d.name = "Debian"
-		}
+		// This is only called if no distro has been detected so far
+		d.detectFromExecutables()
 	}
 	return &d
 }
