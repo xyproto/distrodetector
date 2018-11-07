@@ -116,8 +116,8 @@ func (d *Distro) detectFromEtc() {
 				}
 				d.name = name
 			}
-			// Check if DISTRIB_CODENAME= is defined in /etc/*release*
-		} else if strings.HasPrefix(line, "DISTRIB_CODENAME=") {
+			// Check if DISTRIB_CODENAME= (Ubuntu) or VERSION= (Debian) is defined in /etc/*release*
+		} else if strings.HasPrefix(line, "DISTRIB_CODENAME=") || strings.HasPrefix(line, "VERSION=") {
 			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
 			codename := fields[1]
 			if codename != "" {
@@ -140,6 +140,34 @@ func (d *Distro) detectFromEtc() {
 				}
 				if containsDigit(version) {
 					d.version = version
+				}
+			}
+		} else if d.version == "" && strings.HasPrefix(line, "OS_MAJOR_VERSION=") {
+			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
+			version := fields[1]
+			if version != "" {
+				if strings.HasPrefix(version, "\"") && strings.HasSuffix(version, "\"") {
+					if containsDigit(version) {
+						d.version = version[1 : len(version)-1]
+					}
+					continue
+				}
+				if containsDigit(version) {
+					d.version = version
+				}
+			}
+		} else if d.version != "" && !strings.Contains(d.version, ".") && strings.HasPrefix(line, "OS_MINOR_VERSION=") {
+			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
+			version := fields[1]
+			if version != "" {
+				if strings.HasPrefix(version, "\"") && strings.HasSuffix(version, "\"") {
+					if containsDigit(version) {
+						d.version += "." + version[1 : len(version)-1]
+					}
+					continue
+				}
+				if containsDigit(version) {
+					d.version += "." + version
 				}
 			}
 		}
