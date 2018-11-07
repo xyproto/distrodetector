@@ -24,3 +24,6 @@ matrix:
     - os: linux
       env: DISTRODETECT="Linux (Arch Linux)"
       script: tests/arch/run.sh
+    - os: linux
+      env: DISTRODETECT="Linux (Debian)"
+      script: tests/debian/run.sh
