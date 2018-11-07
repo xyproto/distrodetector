@@ -58,12 +58,14 @@ func AppleCodename(version string) string {
 			}
 		}
 	}
+	// No codename found
+	return ""
 	// If the lookup table did not work out, try a last ditch attempt by
 	// fetching the codename over HTTP from Apple. This may not work out,
 	// but it works for ie. 10.12.
-	codename, err := codenameFromApple(version)
-	if err != nil {
-		return ""
-	}
-	return codename
+	//codename, err := codenameFromApple(version)
+	//if err != nil {
+	//	return ""
+	//}
+	//return codename
 }
