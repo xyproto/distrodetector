@@ -183,6 +183,17 @@ func (d *Distro) detectFromEtc() {
 			}
 		}
 	}
+	// If the codename starts with a word with a digit, followed by a space, use that as the version number,
+	// if the currently detected version number is empty. If not, strip the number from the codename.
+	if strings.Contains(d.codename, " ") {
+		fields := strings.SplitN(d.codename, " ", 2)
+		if containsDigit(fields[0]) {
+			if d.version == "" {
+				d.version = fields[0]
+			}
+			d.codename = fields[1]
+		}
+	}
 }
 
 // New detects the platform and distro/BSD, then returns a pointer to
