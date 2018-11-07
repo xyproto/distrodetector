@@ -1,7 +1,7 @@
-FROM voidlinux/voidlinux
+FROM base/devel
 ENV PROJECT distrodetector
 ENV PACKAGES git go
-RUN xbps-install -Syu && xbps-install -Syu && xbps-install -Sy $PACKAGES
+RUN pacman -Syu --noconfirm && pacman -S --noconfirm $PACKAGES
 RUN git clone "https://github.com/xyproto/$PROJECT" "/$PROJECT"
 WORKDIR "/$PROJECT"
 CMD go test
