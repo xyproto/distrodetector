@@ -1,0 +1,69 @@
+package distrodetector
+
+import (
+	"encoding/xml"
+	"errors"
+	"io/ioutil"
+	"net/http"
+	"strings"
+)
+
+type versionInfo struct {
+	Name       string `xml:"name"`
+	ConfigCode string `xml:"configCode"`
+	Locale     string `xml:"locale"`
+}
+
+// codenameFromApple attempts to fetch the correct codename from Apple,
+// given a version string. The URL that is used is:
+// https://support-sp.apple.com/sp/product?edid=%s
+func codenameFromApple(version string) (string, error) {
+	URL := "https://support-sp.apple.com/sp/product?edid=" + version
+	resp, err := http.Get(URL)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	//fmt.Println(string(data))
+	var vi versionInfo
+	xml.Unmarshal(data, &vi)
+	if vi.ConfigCode == "" {
+		return "", errors.New("No codename returned from " + URL)
+	}
+	codename := vi.ConfigCode
+	if strings.HasPrefix(codename, "macOS ") {
+		return codename[6:], nil
+	}
+	if strings.HasPrefix(codename, "OS X ") {
+		return codename[5:], nil
+	}
+	return codename, nil
+}
+
+// AppleCodename returns a codename, or an empty string.
+// Will first use the lookup table, and then try to fetch it from Apple over HTTP.
+func AppleCodename(version string) string {
+	var appleCodeNames = map[string]string{"10.0": "Cheetah", "10.1": "Puma", "10.2": "Jaguar", "10.3": "Panther", "10.4": "Tiger", "10.5": "Leopard", "10.6": "Snow Leopard", "10.7": "Lion", "10.8": "Mountain Lion", "10.9": "Mavericks", "10.10": "Yosemite", "10.11": "El Capitan", "10.12": "Sierra", "10.13": "High Sierra", "10.14": "Mojave"}
+	// Search the keys, longest keys first
+	for keyLength := 5; keyLength >= 4; keyLength-- {
+		for k, v := range appleCodeNames {
+			if len(k) == keyLength {
+				if strings.HasPrefix(version, k) {
+					return v
+				}
+			}
+		}
+	}
+	// If the lookup table did not work out, try a last ditch attempt by
+	// fetching the codename over HTTP from Apple. This may not work out,
+	// but it works for ie. 10.12.
+	codename, err := codenameFromApple(version)
+	if err != nil {
+		return ""
+	}
+	return codename
+}

@@ -12,10 +12,6 @@ const defaultName = "Unknown"
 // Used when checking for Linux distros and BSDs (and NAME= is not defined in /etc)
 var distroNames = []string{"Arch Linux", "Debian", "Ubuntu", "Void Linux", "FreeBSD", "NetBSD", "OpenBSD", "Manjaro", "Mint", "Elementary", "MX Linuyx", "Fedora", "openSUSE", "Solus", "Zorin", "CentOS", "KDE neon", "Lite", "Kali", "Antergos", "antiX", "Lubuntu", "PCLinuxOS", "Endless", "Peppermint", "SmartOS", "TrueOS", "Arco", "SparkyLinux", "deepin", "Puppy", "Slackware", "Bodhi", "Tails", "Xubuntu", "Archman", "Bluestar", "Mageia", "Deuvan", "Parrot", "Pop!", "ArchLabs", "Q4OS", "Kubuntu", "Nitrux", "Red Hat", "4MLinux", "Gentoo", "Pinguy", "LXLE", "KaOS", "Ultimate", "Alpine", "Feren", "KNOPPIX", "Robolinux", "Voyager", "Netrunner", "GhostBSD", "Budgie", "ClearOS", "Gecko", "SwagArch", "Emmabuntüs", "Scientific", "Omarine", "Neptune", "NixOS", "Slax", "Clonezilla", "DragonFly", "ExTiX", "OpenBSD", "Redcore", "Ubuntu Studio", "BunsenLabs", "BlackArch", "NuTyX", "ArchBang", "BackBox", "Sabayon", "AUSTRUMI", "Container", "ROSA", "SteamOS", "Tiny Core", "Kodachi", "Qubes", "siduction", "Parabola", "Trisquel", "Vector", "SolydXK", "Elive", "AV Linux", "Artix", "Raspbian", "Porteus"}
 
-// TODO: Find a better way
-//ihttps://en.wikipedia.org/wiki/List_of_Apple_operating_systems
-var codeNames = map[string]string{"10.0": "Cheetah", "10.1": "Puma", "10.2": "Jaguar", "10.3": "Panther", "10.4": "Tiger", "10.5":"Leopard", "10.6":"Snow Leopard", "10.7":"Lion", "10.8":"Mountain Lion", "10.9":"Mavericks", "10.10":"Yosemite", "10.11":"El Capitan", "10.12":"Sierra", "10.13":"High Sierra"}
-
 // Distro represents the platform, contents of /etc/*release* and name of the
 // detected Linux distribution or BSD.
 type Distro struct {
@@ -85,8 +81,8 @@ func (d *Distro) detectFromExecutables() {
 		}
 		// Version number
 		d.version = strings.TrimSpace(Run("sw_vers -productVersion"))
-		// Codename, thanks @rubynorails! https://unix.stackexchange.com/a/234173/3920
-		d.codename = strings.TrimSpace(Run("awk '/SOFTWARE LICENSE AGREEMENT FOR OS X/' '/System/Library/CoreServices/Setup Assistant.app/Contents/Resources/en.lproj/OSXSoftwareLicense.rtf' | awk -F 'OS X ' '{print $NF}' | awk '{print substr($0, 0, length($0)-1)}'"))
+		// Codename (like "High Sierra")
+		d.codename = AppleCodename(d.version)
 		// Mac doesn't really have a distro name
 		d.name = ""
 	} else if Has("/usr/sbin/pkg") {
