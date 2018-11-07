@@ -117,7 +117,7 @@ func (d *Distro) detectFromEtc() {
 				d.name = name
 			}
 			// Check if DISTRIB_CODENAME= (Ubuntu) or VERSION= (Debian) is defined in /etc/*release*
-		} else if strings.HasPrefix(line, "DISTRIB_CODENAME=") || strings.HasPrefix(line, "VERSION=") {
+		} else if strings.HasPrefix(line, "DISTRIB_CODENAME=") || (d.codename == "" && strings.HasPrefix(line, "VERSION=")) {
 			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
 			codename := fields[1]
 			if codename != "" {
