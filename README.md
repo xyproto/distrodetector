@@ -6,6 +6,8 @@ Detects which Linux distro or BSD a system is running.
 
 ## Installation of the distro utility
 
+This is meant to be possible to use as a drop-in replacement for `python-distro`:
+
     go get -u github.com/xyproto/distrodetector/cmd/distro
 
 ## Example use

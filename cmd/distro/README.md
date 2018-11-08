@@ -2,11 +2,15 @@
 
 ## Usage
 
-Output the distro name:
+Output the distro name, version and codename (can be used as a drop-in replacement for `python-distro`):
 
     distro
 
-Output platform, distro, codename and version number, if available:
+Output just the distro name:
+
+    distro -n
+
+Output a combined string with all available information:
 
     distro -a
 
