@@ -4,6 +4,10 @@
 
 Detects which Linux distro or BSD a system is running.
 
+## Installation of the distro utility
+
+    go get -u github.com/xyproto/distrodetector/cmd/distro
+
 ## Example use
 
 ```go
