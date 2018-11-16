@@ -138,6 +138,21 @@ func (d *Distro) detectFromEtc() {
 				}
 				d.codename = nopar(capitalize(codename))
 			}
+			// Check if DISTRIBVER = is defined in /etc/*release* (NetBSD)
+		} else if strings.Contains(line, "DISTRIBVER =") {
+			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
+			version := strings.TrimSpace(fields[1])
+			if version != "" {
+				if strings.HasPrefix(version, "'") && strings.HasSuffix(version, "'") {
+					if containsDigit(version) {
+						d.version = version[1 : len(version)-1]
+					}
+					continue
+				}
+				if containsDigit(version) {
+					d.version = version
+				}
+			}
 			// Check if DISTRIB_RELEASE= is defined in /etc/*release*
 		} else if strings.HasPrefix(line, "DISTRIB_RELEASE=") {
 			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
