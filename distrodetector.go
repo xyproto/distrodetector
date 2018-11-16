@@ -98,6 +98,11 @@ func (d *Distro) detectFromExecutables() {
 		d.name = ""
 	} else if Has("/usr/sbin/pkg") {
 		d.name = "FreeBSD"
+		d.version = strings.TrimSpace(Run("/bin/freebsd-version -u"))
+		// Only keep the version number, such as "11.2", ignore the "-RELEASE" part
+		if strings.Contains(d.version, "-") {
+			d.version = d.version[:strings.LastIndex(d.version, "-")]
+		}
 		// rpm and dpkg-query should come last, since many distros may include them
 	} else if Has("rpm") {
 		d.name = "Red Hat"
