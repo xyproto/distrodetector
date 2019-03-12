@@ -4,13 +4,21 @@
 
 Detects which Linux distro or BSD a system is running.
 
+The `distro` utility and the `distrodetector` package has no external dependencies.
+
 ## Installation of the distro utility
 
-This is meant to be possible to use as a drop-in replacement for `python-distro`:
+The `distro` utility can be used as a drop-in replacement for the `distro` command that comes with `python-distro`.
+
+Installation of the development version of the `distro` utility:
 
     go get -u github.com/xyproto/distrodetector/cmd/distro
 
-## Example use
+Example use:
+
+    distro
+
+## Use of the Go package
 
 ```go
 package main
