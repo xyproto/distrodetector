@@ -15,21 +15,23 @@ var distroNames = []string{"Arch Linux", "Debian", "Ubuntu", "Void Linux", "Free
 // Distro represents the platform, contents of /etc/*release* and name of the
 // detected Linux distribution or BSD.
 type Distro struct {
-	platform   string
-	etcRelease string
-	name       string
-	codename   string
-	version    string
+	platform    string
+	etcContents string
+	name        string
+	codename    string
+	version     string
 }
 
-// etcRelease returns the contents of /etc/*release*, or an empty string
-func readEtcRelease() string {
+// readEtc returns the contents of /etc/*release* + /etc/issue, or an empty string
+func readEtc() string {
 	filenames, err := filepath.Glob("/etc/*release*")
 	if err != nil {
 		return ""
 	}
+	filenames = append(filenames, "/etc/issue")
 	var bs strings.Builder
 	for _, filename := range filenames {
+		// Try reading all the files
 		data, err := ioutil.ReadFile(filename)
 		if err != nil {
 			continue
@@ -120,7 +122,7 @@ func (d *Distro) detectFromEtc() {
 		}
 	}
 	// Examine all lines of text in /etc/*release*
-	for _, line := range strings.Split(d.etcRelease, "\n") {
+	for _, line := range strings.Split(d.etcContents, "\n") {
 		// Check if NAME= is defined in /etc/*release*
 		if strings.HasPrefix(line, "NAME=") {
 			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
@@ -221,7 +223,7 @@ func (d *Distro) detectFromEtc() {
 func New() *Distro {
 	var d Distro
 	d.platform = capitalize(runtime.GOOS)
-	d.etcRelease = readEtcRelease()
+	d.etcContents = readEtc()
 	// Distro name, if not detected
 	d.name = defaultName
 	d.codename = ""
@@ -241,7 +243,7 @@ func New() *Distro {
 // If the search fails, a case-insensitive string search is attempted.
 // The contents of /etc/*release* is cached.
 func (d *Distro) Grep(name string) bool {
-	return strings.Contains(d.etcRelease, name) || strings.Contains(strings.ToLower(d.etcRelease), strings.ToLower(name))
+	return strings.Contains(d.etcContents, name) || strings.Contains(strings.ToLower(d.etcContents), strings.ToLower(name))
 }
 
 // Platform returns the name of the current platform.
@@ -267,10 +269,10 @@ func (d *Distro) Version() string {
 	return d.version
 }
 
-// EtcRelease returns the contents of /etc/*release, or an empty string.
+// EtcRelease returns the contents of /etc/*release + /etc/issue, or an empty string.
 // The contents are cached.
 func (d *Distro) EtcRelease() string {
-	return d.etcRelease
+	return d.etcContents
 }
 
 // String returns a string with the current platform, distro
