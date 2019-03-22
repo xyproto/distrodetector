@@ -59,5 +59,5 @@ Pull requests for additional systems are welcome!
 ## General Info
 
 * License: MIT
-* Version: 1.1.0
+* Version: 1.1.1
 * Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
