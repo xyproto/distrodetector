@@ -1,4 +1,4 @@
-FROM base/devel
+FROM archlinux/base
 ENV PROJECT distrodetector
 ENV PACKAGES git go
 RUN pacman -Syu --noconfirm && pacman -S --noconfirm $PACKAGES
