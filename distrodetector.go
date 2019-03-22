@@ -66,7 +66,7 @@ func nopar(s string) string {
 func (d *Distro) detectFromExecutables() {
 	// TODO: Generate a list of all files in PATH before performing these checks
 	// Executables related to package managers
-	if Has("xbsp-query") {
+	if Has("xbps-query") {
 		d.name = "Void Linux"
 	} else if Has("pacman") {
 		d.name = "Arch Linux"
