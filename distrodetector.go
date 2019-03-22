@@ -114,16 +114,16 @@ func (d *Distro) detectFromExecutables() {
 }
 
 func (d *Distro) detectFromEtc() {
-	// First check for Linux distros and BSD distros by grepping in /etc/*release*
+	// First check for Linux distros and BSD distros by grepping in /etc/*release* + /etc/issue
 	for _, distroName := range distroNames {
 		if d.Grep(distroName) {
 			d.name = distroName
 			break
 		}
 	}
-	// Examine all lines of text in /etc/*release*
+	// Examine all lines of text in /etc/*release* + /etc/issue
 	for _, line := range strings.Split(d.etcContents, "\n") {
-		// Check if NAME= is defined in /etc/*release*
+		// Check if NAME= is defined in /etc/*release* + /etc/issue
 		if strings.HasPrefix(line, "NAME=") {
 			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
 			name := fields[1]
@@ -134,7 +134,7 @@ func (d *Distro) detectFromEtc() {
 				}
 				d.name = name
 			}
-			// Check if DISTRIB_CODENAME= (Ubuntu) or VERSION= (Debian) is defined in /etc/*release*
+			// Check if DISTRIB_CODENAME= (Ubuntu) or VERSION= (Debian) is defined in /etc/*release* + /etc/issue
 		} else if strings.HasPrefix(line, "DISTRIB_CODENAME=") || (d.codename == "" && strings.HasPrefix(line, "VERSION=")) {
 			fields := strings.SplitN(strings.TrimSpace(line), "=", 2)
 			codename := fields[1]
