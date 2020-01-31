@@ -33,6 +33,7 @@ func AppleCodename(version string) string {
 		"10.12": "Sierra",
 		"10.13": "High Sierra",
 		"10.14": "Mojave",
+		"10.15": "Catalina",
 	}
 	// Search the keys, longest keys first
 	for keyLength := 5; keyLength >= 4; keyLength-- {
