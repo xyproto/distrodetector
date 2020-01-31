@@ -1,6 +1,6 @@
 # distrodetector
 
-[![Build Status](https://travis-ci.org/xyproto/distrodetector.svg?branch=master)](https://travis-ci.org/xyproto/distrodetector) [![GoDoc](https://godoc.org/github.com/xyproto/distrodetector?status.svg)](http://godoc.org/github.com/xyproto/distrodetector) [![License](http://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://raw.githubusercontent.com/xyproto/distrodetector/master/LICENSE) [![Report Card](https://img.shields.io/badge/go_report-A+-brightgreen.svg?style=flat)](http://goreportcard.com/report/xyproto/distrodetector)
+[![Build Status](https://travis-ci.com/xyproto/distrodetector.svg?branch=master)](https://travis-ci.com/xyproto/distrodetector) [![GoDoc](https://godoc.org/github.com/xyproto/distrodetector?status.svg)](http://godoc.org/github.com/xyproto/distrodetector) [![License](http://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://raw.githubusercontent.com/xyproto/distrodetector/master/LICENSE) [![Go Report Card](https://goreportcard.com/badge/github.com/xyproto/distrodetector)](https://goreportcard.com/report/github.com/xyproto/distrodetector)
 
 Detects which Linux distro or BSD a system is running.
 
