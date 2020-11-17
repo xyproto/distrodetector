@@ -30,10 +30,7 @@ func containsDigit(s string) bool {
 // Has returns the full path to the given executable, or the original string
 func Has(executable string) bool {
 	_, err := exec.LookPath(executable)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 // Run a shell command and return the output, or an empty string
