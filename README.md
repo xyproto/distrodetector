@@ -4,7 +4,14 @@
 
 Detects which Linux distro or BSD a system is running.
 
+Aims to detect:
+
+* The 100 most popular Linux distros and BSDs, according to distrowatch
+* macOS
+
 The `distro` utility and the `distrodetector` package has no external dependencies.
+
+Pull requests for additional systems are welcome!
 
 ## Installation of the distro utility
 
@@ -41,15 +48,6 @@ The parts can be retrieved separately with `.Platform()`, `.Name()`, `.Codename(
     Linux (Ubuntu Bionic 18.04)
     macOS (High Sierra 10.13.3)
     Linux (Void Linux)
-
-## Features and limitations
-
-This package only aims to be able to detect the following:
-
-* The 100 most popular Linux distros and BSDs, according to [distrowatch](https://distrowatch.com/).
-* macOS with Homebrew.
-
-Pull requests for additional systems are welcome!
 
 ## Testing
 
