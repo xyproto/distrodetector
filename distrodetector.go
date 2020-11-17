@@ -41,7 +41,8 @@ func readEtc() string {
 	return bs.String()
 }
 
-// expand expands some distro names to the longer version
+// expand expands "void" to "Void Linux",
+// but shortens "Debian GNU/Linux" to just "Debian".
 func expand(name string) string {
 	rdict := map[string]string{"void": "Void Linux", "Debian GNU/Linux": "Debian"}
 	if _, found := rdict[name]; found {
