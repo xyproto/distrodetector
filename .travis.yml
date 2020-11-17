@@ -8,10 +8,6 @@ matrix:
       env: DISTRODETECT="Linux (Debian Buster 10)"
       script: tests/debian/run.sh
     - os: linux
-      dist: stretch
-      env: DISTRODETECT="Linux (Debian Stretch 9)"
-      script: tests/debian/run.sh
-    - os: linux
       dist: trusty
       env: DISTRODETECT="Linux (Ubuntu Trusty 14.04)"
     - os: linux
