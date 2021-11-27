@@ -31,13 +31,13 @@ Example use:
 package main
 
 import (
-	"fmt"
-	"github.com/xyproto/distrodetector"
+    "fmt"
+    "github.com/xyproto/distrodetector"
 )
 
 func main() {
-	distro := distrodetector.New()
-	fmt.Println(distro.Name())
+    distro := distrodetector.New()
+    fmt.Println(distro.Name())
 }
 ```
 ## Example output
