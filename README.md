@@ -57,5 +57,5 @@ The parts can be retrieved separately with `.Platform()`, `.Name()`, `.Codename(
 ## General Info
 
 * License: MIT
-* Version: 1.1.2
+* Version: 1.3.0
 * Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
