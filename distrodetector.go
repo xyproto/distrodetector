@@ -279,8 +279,9 @@ func (d *Distro) EtcRelease() string {
 // String returns a string with the current platform, distro
 // codename and release version (if available).
 // Example strings:
-//   Linux (Ubuntu Bionic 18.04)
-//   Darwin (10.13.3)
+//
+//	Linux (Ubuntu Bionic 18.04)
+//	Darwin (10.13.3)
 func (d *Distro) String() string {
 	var sb strings.Builder
 	sb.WriteString(d.platform)

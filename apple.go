@@ -17,6 +17,7 @@ type versionInfo struct {
 // AppleCodename returns a codename, or an empty string.
 // Will first use the lookup table, and then try to fetch it from Apple over HTTP.
 func AppleCodename(version string) string {
+	// See also: https://en.wikipedia.org/wiki/MacOS_version_history#Releases
 	var appleCodeNames = map[string]string{
 		"10.0":  "Cheetah",
 		"10.1":  "Puma",
@@ -36,6 +37,7 @@ func AppleCodename(version string) string {
 		"10.15": "Catalina",
 		"11.0":  "Big Sur",
 		"12.0":  "Monterey",
+		"13.0":  "Ventura",
 	}
 	// Search the keys, longest keys first
 	for keyLength := 5; keyLength >= 4; keyLength-- {
