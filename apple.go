@@ -49,6 +49,17 @@ func AppleCodename(version string) string {
 			}
 		}
 	}
+	// No codename found, use one with a matching major version number
+	majorVersionAndDot := version
+	if strings.Contains(version, ".") {
+		fields := strings.SplitN(version, ".", 2)
+		majorVersionAndDot = fields[0] + "."
+	}
+	for k, v := range appleCodeNames {
+		if strings.HasPrefix(k, majorVersionAndDot) {
+			return v
+		}
+	}
 	// No codename found
 	return ""
 }

@@ -97,8 +97,8 @@ func (d *Distro) detectFromExecutables() {
 		d.version = strings.TrimSpace(Run("sw_vers -productVersion"))
 		// Codename (like "High Sierra")
 		d.codename = AppleCodename(d.version)
-		// Mac doesn't really have a distro name
-		d.name = ""
+		// Mac doesn't really have a distro name, use the platform name
+		d.name = d.platform
 	} else if Has("/usr/sbin/pkg") {
 		d.name = "FreeBSD"
 		d.version = strings.TrimSpace(Run("/bin/freebsd-version -u"))
