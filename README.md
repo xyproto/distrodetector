@@ -1,6 +1,6 @@
 # distrodetector
 
-[![GoDoc](https://godoc.org/github.com/xyproto/distrodetector?status.svg)](http://godoc.org/github.com/xyproto/distrodetector) [![License](http://img.shields.io/badge/license-MIT-green.svg?style=flat)](https://raw.githubusercontent.com/xyproto/distrodetector/master/LICENSE) [![Go Report Card](https://goreportcard.com/badge/github.com/xyproto/distrodetector)](https://goreportcard.com/report/github.com/xyproto/distrodetector)
+[![GoDoc](https://godoc.org/github.com/xyproto/distrodetector?status.svg)](http://godoc.org/github.com/xyproto/distrodetector) [![License](http://img.shields.io/badge/license-BSD-green.svg?style=flat)](https://raw.githubusercontent.com/xyproto/distrodetector/master/LICENSE) [![Go Report Card](https://goreportcard.com/badge/github.com/xyproto/distrodetector)](https://goreportcard.com/report/github.com/xyproto/distrodetector)
 
 Detects which Linux distro or BSD a system is running.
 
@@ -56,6 +56,6 @@ The parts can be retrieved separately with `.Platform()`, `.Name()`, `.Codename(
 
 ## General Info
 
-* License: MIT
-* Version: 1.3.0
+* License: BSD-3
+* Version: 1.3.1
 * Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
