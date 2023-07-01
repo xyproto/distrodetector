@@ -38,6 +38,7 @@ func AppleCodename(version string) string {
 		"11.0":  "Big Sur",
 		"12.0":  "Monterey",
 		"13.0":  "Ventura",
+		"14.0":  "Sonoma",
 	}
 	// Search the keys, longest keys first
 	for keyLength := 5; keyLength >= 4; keyLength-- {
