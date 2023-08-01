@@ -4,6 +4,8 @@
 
 Detects which Linux distro or BSD a system is running.
 
+This is also a drop-in replacement for the `distro` command that comes with `python-distro`.
+
 Aims to detect:
 
 * The 100 most popular Linux distros and BSDs, according to distrowatch
@@ -14,8 +16,6 @@ The `distro` utility and the `distrodetector` package has no external dependenci
 Pull requests for additional systems are welcome!
 
 ## Installation of the distro utility
-
-The `distro` utility can be used as a drop-in replacement for the `distro` command that comes with `python-distro`.
 
 Installation of the development version of the `distro` utility:
 
