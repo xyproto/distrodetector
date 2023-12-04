@@ -19,7 +19,7 @@ Pull requests for additional systems are welcome!
 
 Installation of the development version of the `distro` utility:
 
-    go get -u github.com/xyproto/distrodetector/cmd/distro
+    go install github.com/xyproto/distrodetector/cmd/distro@latest
 
 Example use:
 
