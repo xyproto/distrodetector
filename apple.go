@@ -39,8 +39,8 @@ func AppleCodename(version string) string {
 		"12.0":  "Monterey",
 		"13.0":  "Ventura",
 		"14.0":  "Sonoma",
-        "15.0":  "Sequoia",
-        "26.0":  "Tahoe",		
+		"15.0":  "Sequoia",
+		"26.0":  "Tahoe",		
 	}
 	// Search the keys, longest keys first
 	for keyLength := 5; keyLength >= 4; keyLength-- {
